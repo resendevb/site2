@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HSO | Cadastro</title>
+    <link rel="stylesheet" href="css/style.css">
+
+    <link rel="icon" href="../public/assets/icons/icone_head.ico" />
+</head>
+
+<body>
+    <div id="id_navbar" class="navbar">
+
+        <div class="nav">
+            <img src="assets/imgs/logo.png">
+            <img onclick="abrir_menu()" class="imagem_menu" src="../assets/imgs/icone5.svg">
+            <ul class="menu">
+                <li class="links um"><a href="index.html" class="links">Home</a></li>
+                <li class="links dois"><a href="login_filial.html" class="links">Login</a></li>
+                <li class="links tres"><a href="cadastro_filial.html" class="links">Cadastro</a></li>
+            </ul>
+        </div>
+
+    </div>
+
+    <div id="opcoes_menu" class="container_opcoes_menu">
+        <div class="menu_one">
+            <div class="espacos">
+                <p>
+                    <a href="login_filial.html">Login</a>
+                </p>
+            </div>
+            <div class="espacos">
+                <p>
+                    <a href="cadastro_filial.html">Cadastro</a>
+                </p>
+            </div>
+            <div class="espacos last">
+                <a href="https://facebook.com/">
+                    <img src="assets/icons/facebook.png" alt="">
+                </a>
+                <a href="https://instagram.com/">
+                    <img src="assets/icons/instagram.png" alt="">
+                </a>
+                <a href="https://github.com/orgs/2ADSC-Grupo9-HSO/repositories">
+                    <img src="assets/icons/github.png" alt="">
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="alerta_erro">
+        <div class="card_erro" id="cardErro">
+            <span id="mensagem_erro"></span>
+        </div>
+    </div>
+
+    <div id="opcoes_menu" class="container_opcoes_menu">
+        <div class="menu_one">
+            <div class="espacos">
+                <p>
+                    <a href="login_filial.html">Login</a>
+                </p>
+            </div>
+            <div class="espacos">
+                <p>
+                    <a href="cadastro_filial.html">Cadastro</a>
+                </p>
+            </div>
+            <div class="espacos last">
+                <a href="https://facebook.com/">
+                    <img src="assets/icons/facebook.png" alt="">
+                </a>
+                <a href="https://instagram.com/">
+                    <img src="assets/icons/instagram.png" alt="">
+                </a>
+                <a href="https://github.com/orgs/2ADSC-Grupo9-HSO/repositories">
+                    <img src="assets/icons/github.png" alt="">
+                </a>
+            </div>
+        </div>
+    </div>
+    <section class="imagemFundo" id="sec_inicio">
+
+
+        <div class="pai_cadastro1">
+            <div class="cadastro1">
+                <h1>Cadastre sua filial:</h1>
+
+
+                
+                <input type="text" placeholder="CEP" id="input_cep">
+                <input type="number" placeholder="Número Endereço" id="input_numero">
+                <input type="text" placeholder="Complemento" id="input_complemento">
+                <input type="text" placeholder="Telefone" id="input_telefone">
+                <input type="email" placeholder="E-mail" id="input_emailFilial">
+                <input type="text" placeholder="CNPJ" id="input_cnpj">
+                <input type="password" placeholder="Senha" id="input_senha">
+                <p>Cadastre uma senha com 8 caracteres</p>
+
+                <button onclick="cadastrarFilial()">Cadastrar</button>
+
+
+
+            </div>
+
+        </div>
+
+
+
+    </section>
+
+</body>
+
+</html>
+<script>
+    let desbloqueado = true;
+
+function abrir_menu() {
+
+    if (desbloqueado) {
+        opcoes_menu.style.display = "flex";
+        opcoes_menu.style.position = "fixed";
+        opcoes_menu.style.position = "fixed";
+        id_navbar.style.backgroundColor = " white"
+        id_navbar.style.borderBottom = "solid 2px #858585"
+        desbloqueado = false;
+
+    } else if (!desbloqueado) {
+        id_navbar.style.backgroundColor = "#000000C7"
+        id_navbar.style.borderBottom = "none"
+        opcoes_menu.style.display = "none";
+        desbloqueado = true;
+    }
+
+}
+
+window.addEventListener('resize', resizeHandler);
+
+resizeHandler();
+
+function resizeHandler(){
+    const tela = window.innerWidth;
+    if(tela > 600){
+        desbloqueado = false;
+        abrir_menu();
+    }
+}
+
+function change_screen(n) {
+    switch (n) {
+        case 1:
+            window.location = "#sec_sobre"
+            break;
+        case 2:
+            window.location = "#sec_empresa"
+    }
+}
+
+    function cadastrarFilial() {
+        // aguardar();
+
+        //Recupere o valor da nova input pelo nome do id
+        // Agora vá para o método fetch logo abaixo
+        
+        var cepVar = input_cep.value;
+        var numeroVar = input_numero.value;
+        var complementoVar
+        var telefoneVar = input_telefone.value;
+        var emailFilialVar = input_emailFilial.value;
+        var cnpjVar = input_cnpj.value;
+        var senhaVar = input_senha.value;
+
+
+        if ( cepVar == "" || numeroVar == "" || telefoneVar == "" || emailFilialVar == "" || cnpjVar == "" || senhaVar == "") {
+            cardErro.style.display = "block"
+            mensagem_erro.innerHTML = "(Mensagem de erro para todos os campos em branco)";
+
+            // finalizarAguardar();
+            // return false;
+        }
+        else {
+            setInterval(sumirMensagem, 5000)
+        }
+
+        // Enviando o valor da nova input
+        fetch("/usuarios/cadastrarFilial", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                // crie um atributo que recebe o valor recuperado aqui
+                // Agora vá para o arquivo routes/usuario.js
+                
+                cepServer: cepVar,
+                numeroServer: numeroVar,
+                telefoneServer: telefoneVar,
+                emailFilial1Server: emailFilialVar,
+                cnpjServer: cnpjVar,
+                senhaServer: senhaVar
+            })
+        }).then(function (resposta) {
+
+            console.log("resposta: ", resposta);
+
+            if (resposta.ok) {
+                /* cardErro.style.display = "block"; */
+
+                mensagem_erro.innerHTML = "Cadastro realizado com sucesso! Redirecionando para tela de login...";
+
+                setTimeout(() => {
+                    window.location = "login_filial.html";
+                }, "2000")
+
+                // limparFormulario();
+                // finalizarAguardar();
+            } else {
+                throw ("Houve um erro ao tentar realizar o cadastro!");
+            }
+        }).catch(function (resposta) {
+            console.log(`#ERRO: ${resposta}`);
+            // finalizarAguardar();
+        });
+
+        return false;
+    }
+
+    function sumirMensagem() {
+        cardErro.style.display = "none"
+    }
+
+</script>

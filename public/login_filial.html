@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./css/style.css">
+    <title>HSO | Login</title>
+    <link rel="icon" href="assets/icons/icone_head.ico" />
+
+
+</head>
+
+<body>
+    <div id="id_navbar" class="navbar">
+
+        <div class="nav">
+            <img src="assets/imgs/logo.png">
+            <img onclick="abrir_menu()" class="imagem_menu" src="../assets/imgs/icone5.svg">
+            <ul class="menu">
+                <li class="links um"><a href="index.html" class="links">Home</a></li>
+                <li class="links dois"><a href="login_filial.html" class="links">Login</a></li>
+                <li class="links tres"><a href="cadastro_filial.html" class="links">Cadastro</a></li>
+            </ul>
+        </div>
+
+    </div>
+
+    <div id="opcoes_menu" class="container_opcoes_menu">
+        <div class="menu_one">
+            <div class="espacos">
+                <p>
+                    <a href="login_filial.html">Login</a>
+                </p>
+            </div>
+            <div class="espacos">
+                <p>
+                    <a href="cadastro_filial.html">Cadastro</a>
+                </p>
+            </div>
+            <div class="espacos last">
+                <a href="https://facebook.com/">
+                    <img src="assets/icons/facebook.png" alt="">
+                </a>
+                <a href="https://instagram.com/">
+                    <img src="assets/icons/instagram.png" alt="">
+                </a>
+                <a href="https://github.com/orgs/2ADSC-Grupo9-HSO/repositories">
+                    <img src="assets/icons/github.png" alt="">
+                </a>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="cont">
+
+        <div class="imagem" id="div_imagem">
+            <h1>Olá!</h1>
+        </div>
+
+        <div class="formulario" id="div_form">
+            <div class="form">
+                <h1>Bem-vindo!</h1>
+
+                <input type="number" placeholder="CPF/CNPJ" id="input_cpf_cnpj">
+                <input type="password" placeholder="Senha" id="input_senha">
+
+                <button onclick="entrar()">Entrar</button>
+            </div>
+        </div>
+
+
+    </div>
+
+</body>
+
+</html>
+<script>
+    let desbloqueado = true;
+
+
+
+    function abrir_menu() {
+
+        if (desbloqueado) {
+            opcoes_menu.style.display = "flex";
+            opcoes_menu.style.position = "fixed";
+            opcoes_menu.style.position = "fixed";
+            id_navbar.style.backgroundColor = " white";
+            id_navbar.style.borderBottom = "solid 2px #858585";
+            desbloqueado = false;
+            
+
+        } else if (!desbloqueado) {
+            id_navbar.style.backgroundColor = "#000000C7"
+            id_navbar.style.borderBottom = "none"
+            opcoes_menu.style.display = "none"
+            
+            desbloqueado = true;
+        }
+
+    }
+
+    window.addEventListener('resize', resizeHandler);
+
+    resizeHandler();
+
+    function resizeHandler() {
+        const tela = window.innerWidth;
+        if (tela > 600) {
+            desbloqueado = false;
+            
+            abrir_menu();
+        }
+    }
+
+    function change_screen(n) {
+        switch (n) {
+            case 1:
+                window.location = "#sec_sobre"
+                break;
+            case 2:
+                window.location = "#sec_empresa"
+        }
+    }
+
+
+
+    function entrar() {
+
+
+        var cpf_cnpjVar = input_cpf_cnpj.value;
+        var senhaVar = input_senha.value;
+
+        if (cpf_cnpjVar == "" || senhaVar == "") {
+            cardErro.style.display = "block"
+            mensagem_erro.innerHTML = "(Mensagem de erro para todos os campos em branco)";
+            /* finalizarAguardar(); */
+            return false;
+        }
+        /* else {
+            setInterval(sumirMensagem, 5000)
+        } */
+
+        console.log("FORM LOGIN: ", cpf_cnpjVar);
+        console.log("FORM SENHA: ", senhaVar);
+
+        if (cpf_cnpjVar.length == 14) {
+
+            fetch("/usuarios/autenticarFilial", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    cpf_cnpjServer: cpf_cnpjVar,
+                    senhaServer: senhaVar
+                })
+            }).then(function (resposta) {
+                console.log("ESTOU NO THEN DO entrar()!")
+
+                if (resposta.ok) {
+                    console.log(resposta);
+
+                    resposta.json().then(json => {
+                        console.log(json);
+                        console.log(JSON.stringify(json));
+
+                        //pega os valores que o usuario coloca e guarda 
+                        sessionStorage.ID_FILIAL = json.idFilial;
+                        sessionStorage.NOME_REDE = json.nomeRede;
+                        //sessionStorage.ID_FILIAL = json.id;
+                        //sessionStorage.ID_SESSAO= (Math.random() * 10000).toFixed(0);
+                        //math random sorteia numero entre 0 e 1, pode multiplicar por qualquer numero 
+
+                        setTimeout(function () {
+                            window.location = "cadastro_usuario.html";
+                        }, 1000); // apenas para exibir o loading
+
+                    });
+
+                } else {
+
+                    console.log("Houve um erro ao tentar realizar o login!");
+
+                    resposta.text().then(texto => {
+                        console.error(texto);
+
+                    });
+                }
+
+            }).catch(function (erro) {
+                console.log(erro);
+            })
+
+            return false;
+        }
+        else {
+            fetch("/usuarios/autenticarUsuario", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    cpf_cnpjServer: cpf_cnpjVar,
+                    senhaServer: senhaVar
+                })
+            }).then(function (resposta) {
+                console.log("ESTOU NO THEN DO entrar()!")
+
+                if (resposta.ok) {
+                    console.log(resposta);
+
+                    resposta.json().then(json => {
+                        console.log(json);
+                        console.log(JSON.stringify(json));
+
+                        //pega os valores que o usuario coloca e guarda 
+                        sessionStorage.FK_FILIAL = json.fkFilial;
+                        sessionStorage.NOME_USUARIO = json.nome;
+                        //sessionStorage.ID_FILIAL = json.id;
+                        //sessionStorage.ID_SESSAO= (Math.random() * 10000).toFixed(0);
+                        //math random sorteia numero entre 0 e 1, pode multiplicar por qualquer numero 
+
+                        setTimeout(function () {
+                            window.location = "./dashboard/index.html";
+                            // window.location = "login_filial.html";
+                        }, 1000); // apenas para exibir o loading
+
+                    });
+
+                } else {
+
+                    console.log("Houve um erro ao tentar realizar o login!");
+
+                    resposta.text().then(texto => {
+                        console.error(texto);
+
+                    });
+                }
+
+            }).catch(function (erro) {
+                console.log(erro);
+            })
+
+            return false;
+        }
+
+    }
+
+
+    /* function sumirMensagem() {
+        cardErro.style.display = "none"
+    } */
+
+</script>
